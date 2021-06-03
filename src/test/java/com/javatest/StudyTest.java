@@ -4,18 +4,20 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//언더스코어 공백 치환
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
     @Test
-    void createTest(){
+    @DisplayName("스터디 만들기")
+    void create_new_study(){
         Study study = new Study();
         assertNotNull(study);
         System.out.println(" create Test! ");
     }
 
     @Test
-    @Disabled
-    void createTest2(){
+    void create_new_study_again(){
         System.out.println(" create Test2! ");
     }
 
