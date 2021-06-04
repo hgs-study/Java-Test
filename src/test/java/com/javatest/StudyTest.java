@@ -2,6 +2,7 @@ package com.javatest;
 
 import org.junit.jupiter.api.*;
 
+import java.time.Duration;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,9 +14,27 @@ class StudyTest {
     @Test
     @DisplayName("스터디 만들기")
     void create_new_study(){
-        // assertThrows을 이용한 exception 테스트
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class , () -> new Study(-10));
-        assertEquals("limit은 0보다 커야합니다.",exception.getMessage());
+
+        //assertTimeout 은 Duration를 인자로 받고 10초 안에 스터디가 생성되어야 성공
+        assertTimeout(Duration.ofSeconds(10), () -> new Study(10));
+
+
+        // 코드블록({ }) 안에 로직이 300밀리 세컨드로 설정되어있는데 이 300밀리 세컨드를 다 기다리고 테스트가 완료된다.
+        assertTimeout(Duration.ofMillis(100), () -> {
+            new Study(10);
+            Thread.sleep(300);
+        });
+
+        // 코드블록({ }) 안에 로직이 300밀리 세컨드로 설정되어있는데  이 테스트는 100밀리 세컨드가 넘으면 즉시 완료된다
+        // 문제점 : ThreadLocal을 사용하는 로직이 있으면 예상치 못한 에러를 발생시킬 수 있다.
+        // ThreadLocal : Spring Transaction은 ThreadLocal을 사용하는데, 다른 쓰레드에선 공유가 안 된다.
+        // -> 스프링 트랜잭션 설정이 제대로 테스트 안 될 수가 있다. (롤백이 안 되고 디비에 반영될 수 있다.)
+        assertTimeoutPreemptively(Duration.ofMillis(100), () -> {
+            new Study(10);
+            Thread.sleep(300);
+        });
+
+
     }
 
     @Test
