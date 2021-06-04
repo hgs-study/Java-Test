@@ -2,6 +2,8 @@ package com.javatest;
 
 import org.junit.jupiter.api.*;
 
+import java.util.function.Supplier;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 //언더스코어 공백 치환
@@ -11,9 +13,25 @@ class StudyTest {
     @Test
     @DisplayName("스터디 만들기")
     void create_new_study(){
-        Study study = new Study();
+        Study study = new Study(-10);
         assertNotNull(study);
-        System.out.println(" create Test! ");
+
+        //(기댓값, 실제값, 메세지) :기댓값 <-> 실제값 바뀌어도 제대로 동작한다.
+        assertEquals(StudyStatus.DRAFT,study.getStatus(),"스터디를 처음 만들면 상태값이 DRAFT여야한다.");
+
+
+        assertEquals(StudyStatus.DRAFT,study.getStatus(),
+                "스터디를 처음 만들면 상태값이 "+StudyStatus.DRAFT+"여야한다.");
+
+        //람다 서플라이어로 작성 가능 (실패하면 "+StudyStatus.DRAFT+" 부분 문자열 연산을 안 함
+        //하지만 람다를 사용하지 않을 경우 성공을 하든 실패를하든 문자열 연산을 한다.
+        assertEquals(StudyStatus.DRAFT,study.getStatus(),
+                () -> "스터디를 처음 만들면 상태값이 "+StudyStatus.DRAFT+"여야한다.");
+
+
+        assertTrue( study.getLimit() > 0, "스터디 참석 가능 인원은 0보다 커야한다.");
+
+
     }
 
     @Test
