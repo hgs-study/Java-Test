@@ -2,6 +2,8 @@ package com.javatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -29,5 +31,24 @@ class StudyTest02 {
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
-//    [END] Tag
+// [END] Tag
+
+
+    //반복하고 싶은 테스트
+    @DisplayName("반복 테스트")
+    @RepeatedTest(value = 10, name="{displayName}, {currentRepetition} / {totalRepetitions}")
+    void RepeatedTest_10(RepetitionInfo repetitionInfo){
+        //repetitionInfo를 인자로 받아서 총 몇번 중 몇번 째 테스트인지 확인 가능
+        System.out.println("Test" + repetitionInfo.getCurrentRepetition() + " / " + repetitionInfo.getTotalRepetitions());
+    }
+
+    //파라미터 테스트 (파라미터 갯수만큼 테스트)
+    @DisplayName("파라미터 테스트")
+    @ParameterizedTest(name="{index} {displayName} message={0} ")
+    @ValueSource(strings = {"날씨가","많이","추워지고","있네요."})
+    void parameterizedTest(String message){
+        System.out.println("message = " + message);
+    }
+
+
 }
