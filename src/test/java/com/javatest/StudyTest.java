@@ -18,12 +18,9 @@ class StudyTest {
     @Test
     @DisplayName("스터디 만들기")
     void create_new_study(){
-
         // assertThat(assertj 사용)
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
-
-
     }
 
     @Test
@@ -54,6 +51,7 @@ class StudyTest {
     }
 
 
+//    [START] 실행환경
 
     @Test
     @DisplayName("WINDOWS")
@@ -75,9 +73,32 @@ class StudyTest {
         // assertThat(assertj 사용)
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
-
-
     }
+//    [END] 실행환경
+
+//    [START] Tag
+
+    @Test
+    @DisplayName("스터디 만들기 FAST")
+    @Tag("fast")
+    void create_new_study_fast(){
+        // assertThat(assertj 사용)
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("스터디 만들기 SLOW")
+    @Tag("slow")
+    void create_new_study_slow(){
+        // assertThat(assertj 사용)
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+//    [END] Tag
+
+
 
 
 
