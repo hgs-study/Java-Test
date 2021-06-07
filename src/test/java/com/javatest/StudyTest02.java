@@ -2,7 +2,12 @@ package com.javatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.converter.SimpleArgumentConverter;
@@ -15,22 +20,28 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 //언더스코어 공백 치환
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 클래스마다 의존성 생성하기 때문에 이젠 여러 메서드가 하나의 인스턴스를 공유한다
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) //테스트 실행 순서 정해줄 수 있다.
 class StudyTest02 {
 
+    int value = 0;
+
 //    [START] Tag
+    @Order(2)
     @DisplayName("fastTest 어노테이션 적용")
     @FastTest   // 커스텀 어노테이션을 사용할 경우 <-> 기존의 @TAG("fast")는 타입 세이프하지 않다. fasd, fadt 등 오타가 날 수 있다.
     void create_new_study_fast(){
         System.out.println("fast start");
-
+        value++;
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
 
+    @Order(1)
     @DisplayName("slowTest 어노테이션 적용")
     @SlowTest
     void create_new_study_slow(){
-        System.out.println("slow start");
+        System.out.println("slow start" + value);
 
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
@@ -59,11 +70,42 @@ class StudyTest02 {
     //파라미터 테스트 (파라미터 갯수만큼 테스트)
     @DisplayName("파라미터 테스트")
     @ParameterizedTest(name="{index} {displayName} message={0} ")
-    @ValueSource(ints = {10,20,30})
-//    @CsvSource({"10,'자바 스터디'","20, '스프링 스터디'"})
-    void csvSource(@ConvertWith(StudyConverter.class) Study study){
-        System.out.println("study.getLimit() = " + study.getLimit());
+    @CsvSource({"10,'자바 스터디'","20, '스프링 스터디'"})
+    void csvSource(Integer limit, String name){
+        Study study = new Study(limit,name);
+        System.out.println(study);
     }
+
+    //ArgumentsAccessor 활용해서 인자 여러개 받을 수 있음
+    @DisplayName("파라미터 테스트")
+    @ParameterizedTest(name="{index} {displayName} message={0} ")
+    @CsvSource({"10,'자바 스터디'","20, '스프링 스터디'"})
+    void csvSources(ArgumentsAccessor argumentsAccessor){
+        Study study = new Study(argumentsAccessor.getInteger(0), //첫번쨰 위치(10,20)에서 꺼냄
+                                argumentsAccessor.getString(1) //두번째 위치(자바스터디, 스프링 스터디)에서 꺼냄
+                                );
+        System.out.println(study);
+    }
+
+
+
+    //Aggregator 활용해서 인자 여러개 받을 수 있음
+    @DisplayName("파라미터 테스트")
+    @ParameterizedTest(name="{index} {displayName} message={0} ")
+    @CsvSource({"10,'자바 스터디'","20, '스프링 스터디'"})
+    void csvSources(@AggregateWith(StudyAggregator.class) Study study){
+        System.out.println(study);
+    }
+
+    //퍼블릭 클래스 이거나 이너 스태틱 클래스여야한다.
+    static class StudyAggregator implements ArgumentsAggregator{
+        @Override
+        public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+            return new Study(accessor.getInteger(0), accessor.getString(1));
+        }
+    }
+
+
     
     static class StudyConverter extends SimpleArgumentConverter{
         @Override
