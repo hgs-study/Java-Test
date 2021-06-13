@@ -13,7 +13,7 @@ public class FindSlowTestExtension implements BeforeTestExecutionCallback, After
 
 //    private static final long THRESHOLD = 1000L;
 
-//    THRESHOLD를 유동적으로 주고 싶을 경우
+//   프로그래밍적 방법 : THRESHOLD를 유동적으로 주고 싶을 경우
     private long THRESHOLD;
 
     public FindSlowTestExtension(long THRESHOLD) {
