@@ -7,10 +7,19 @@ import org.springframework.test.context.event.annotation.AfterTestExecution;
 import org.springframework.test.context.event.annotation.BeforeTestExecution;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
-public class FindSlowTestExtenstion implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
+public class FindSlowTestExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
-    private static final long THRESHOLD = 1000L;
+//    private static final long THRESHOLD = 1000L;
+
+//    THRESHOLD를 유동적으로 주고 싶을 경우
+    private long THRESHOLD;
+
+    public FindSlowTestExtension(long THRESHOLD) {
+        this.THRESHOLD = THRESHOLD;
+    }
+
 
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
@@ -20,11 +29,14 @@ public class FindSlowTestExtenstion implements BeforeTestExecutionCallback, Afte
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
+        Method requiredTestMethod = context.getRequiredTestMethod();   // 리플렉션을 활용한 방법
+        SlowTest annotation = requiredTestMethod.getAnnotation(SlowTest.class); // 리플렉션을 활용한 방법
+
         String testMethodName = context.getRequiredTestMethod().getName();
         ExtensionContext.Store store = getStore(context);
         long start_time = store.remove("START_TIME", long.class);
         long duration = System.currentTimeMillis() - start_time;
-        if(duration > THRESHOLD){
+        if(duration > THRESHOLD && annotation == null){
             System.out.printf("Please consider mark method [%s] with @SlwTest. \n" , testMethodName);
         }
     }

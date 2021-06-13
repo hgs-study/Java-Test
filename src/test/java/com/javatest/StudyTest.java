@@ -3,18 +3,19 @@ package com.javatest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.time.Duration;
-import java.util.function.Supplier;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
-@ExtendWith(FindSlowTestExtenstion.class) // 선언적 방법
+//@ExtendWith(FindSlowTestExtension.class) // 선언적 방법
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
+
+    @RegisterExtension //프로그래밍적 방법
+    static FindSlowTestExtension findSlowTestExtension =
+            new FindSlowTestExtension(1000L);
 
     @Test
     @DisplayName("스터디 만들기")
@@ -22,6 +23,7 @@ class StudyTest {
         Thread.sleep(1005L);
 
         Study actual = new Study(10);
+
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
 
