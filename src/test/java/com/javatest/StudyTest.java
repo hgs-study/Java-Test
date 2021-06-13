@@ -2,6 +2,7 @@ package com.javatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -11,14 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
-//언더스코어 공백 치환
+@ExtendWith(FindSlowTestExtenstion.class) // 선언적 방법
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
     @Test
     @DisplayName("스터디 만들기")
-    void create_new_study(){
-        // assertThat(assertj 사용)
+    void create_new_study() throws InterruptedException {
+        Thread.sleep(1005L);
+
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
