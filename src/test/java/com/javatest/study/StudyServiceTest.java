@@ -40,28 +40,23 @@ class StudyServiceTest {
         member.setId(1L);
         member.setEmail("hyun@naver.com");
 
-//        when(memberService.findById(1L)).thenReturn(Optional.of(member));
-        when(memberService.findById(any())).thenReturn(Optional.of(member)); //any() 를 사용할 경우 아무 파라미터
 
-        Study study = new Study(10,"java");
-//        Optional<Member> findById = memberService.findById(1L);
+        when(memberService.findById(any()))
+                .thenReturn(Optional.of(member))   // 첫 번째 호출되면 객체 리턴
+                .thenThrow(new RuntimeException()) // 두 번째 호출되면 예외처리
+                .thenReturn(Optional.empty());     // 세 번째 호출되면 빈 옵셔널
 
-        assertEquals("hyun@naver.com",memberService.findById(1L).get().getEmail());
-        assertEquals("hyun@naver.com",memberService.findById(2L).get().getEmail());
-        assertEquals("hyun@naver.com",memberService.findById(3L).get().getEmail());
+        // 첫 번째 호출
+        Optional<Member> byId = memberService.findById(1L);
+        assertEquals("hyun@naver.com",byId.get().getEmail());
 
-
-//        when(memberService.findById(1L)).thenThrow(new RuntimeException()); //  해당 갑싱 나오면 익셉션
-
-        //memberService에 validate(1L)이라는 메서드가 호출되면 IllegalArgumentException을 발생시켜라
-        doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
-
-        //memberService에 validate(1L)이라는 메서드가 호출되면 IllegalArgumentException을 발생시켜라
-        assertThrows(IllegalArgumentException.class, () ->{
-            memberService.validate(1L);
+        // 두 번째 호출
+        assertThrows(RuntimeException.class, ()->{
+            memberService.findById(2L);
         });
 
-        memberService.validate(2L);
+        // 세 번째 호출
+        assertEquals(Optional.empty() , memberService.findById(3L));
 
 
     }
