@@ -1,4 +1,6 @@
-package com.javatest;
+package com.javatest.domain;
+
+import com.javatest.StudyStatus;
 
 public class Study {
 
@@ -7,6 +9,16 @@ public class Study {
     private int limit;
 
     private String name;
+
+    private Member owner;
+
+    public Member getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Member owner) {
+        this.owner = owner;
+    }
 
     public Study(int limit, String name) {
         this.limit = limit;
