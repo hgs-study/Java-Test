@@ -20,8 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudyServiceTest {
@@ -51,8 +50,18 @@ class StudyServiceTest {
         assertEquals("hyun@naver.com",memberService.findById(2L).get().getEmail());
         assertEquals("hyun@naver.com",memberService.findById(3L).get().getEmail());
 
-//        studyService.createNewStudy(1L,study);
 
+//        when(memberService.findById(1L)).thenThrow(new RuntimeException()); //  해당 갑싱 나오면 익셉션
+
+        //memberService에 validate(1L)이라는 메서드가 호출되면 IllegalArgumentException을 발생시켜라
+        doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
+
+        //memberService에 validate(1L)이라는 메서드가 호출되면 IllegalArgumentException을 발생시켜라
+        assertThrows(IllegalArgumentException.class, () ->{
+            memberService.validate(1L);
+        });
+
+        memberService.validate(2L);
 
 
     }
