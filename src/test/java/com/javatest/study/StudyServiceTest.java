@@ -8,6 +8,7 @@ import com.javatest.study.StudyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,7 +26,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudyServiceTest {
-
 
     @Mock
     MemberService memberService;
@@ -68,6 +68,35 @@ class StudyServiceTest {
 
     }
 
+    @Test
+    void createNewStudy_02(){
+        StudyService studyService = new StudyService(memberService,studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("hyun@naver.com");
+        Study study = new Study(10,"java");
+
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        studyService.createNewStudy(1L,study);
+
+        assertEquals(member, study.getOwner());
+
+        verify(memberService, times(1)).notify(study);
+        verifyNoMoreInteractions(memberService);
+
+        verify(memberService, times(1)).notify(member);
+        verify(memberService, never()).validate(any());
+
+        // "순차"적으로 호출된 것 확인
+        InOrder inOrder = inOrder(memberService);
+        inOrder.verify(memberService).notify(study);
+        inOrder.verify(memberService).notify(member);
+    }
+
     //TODO memberService 객체에 findById 메소드를 1L 값으로 호출하면 member 객체를 리턴하도록 Stubbing
     //TODO studyRepository 객체에 save 메소드를 study 객체로 호출하면 study 객체 그대로 리턴하도록 Stubbing
     @Test
@@ -87,5 +116,7 @@ class StudyServiceTest {
         studyService.createNewStudy(1L,study);
 
         assertEquals(member, study.getOwner());
+
+        verify(memberService, times(1)).notify(study);
     }
 }
