@@ -2,6 +2,8 @@ package com.javatest.domain;
 
 import com.javatest.StudyStatus;
 
+import java.time.LocalDateTime;
+
 public class Study {
 
     private StudyStatus status ;
@@ -11,6 +13,8 @@ public class Study {
     private String name;
 
     private Member owner;
+
+    private LocalDateTime openDateTime;
 
     public Member getOwner() {
         return owner;
@@ -44,6 +48,10 @@ public class Study {
         return name;
     }
 
+    public LocalDateTime getOpenDateTime() {
+        return openDateTime;
+    }
+
     @Override
     public String toString() {
         return "Study{" +
@@ -51,5 +59,10 @@ public class Study {
                 ", limit=" + limit +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public void open(){
+        this.openDateTime = LocalDateTime.now();
+        this.status = StudyStatus.OPENED;
     }
 }

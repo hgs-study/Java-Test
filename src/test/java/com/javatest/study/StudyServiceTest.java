@@ -1,5 +1,6 @@
 package com.javatest.study;
 
+import com.javatest.StudyStatus;
 import com.javatest.domain.Member;
 import com.javatest.domain.Study;
 import com.javatest.member.MemberService;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,5 +145,26 @@ class StudyServiceTest {
         assertEquals(member, study.getOwner());
 
         verify(memberService, times(1)).notify(study);
+    }
+
+
+
+    @DisplayName("다른 사용자가 볼 수 있도록 스터디를 공개한다.")
+    @Test
+    void openStudy(){
+        //given
+        StudyService studyService = new StudyService(memberService,studyRepository);
+        Study study = new Study(10,"java");
+        assertNull(study.getOpenDateTime());
+        given(studyRepository.save(study)).willReturn(study);
+
+        //when
+        studyService.open(study);
+
+        //then
+        assertEquals(study.getStatus(), StudyStatus.OPENED);
+        assertNotNull(study.getOpenDateTime());
+        then(studyRepository).should().save(study);
+        then(memberService).should().notify(study);
     }
 }
