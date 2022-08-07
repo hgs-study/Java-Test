@@ -1,0 +1,11 @@
+version: "3.2"
+services:
+  mysql-container:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test1234
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 3308:3306

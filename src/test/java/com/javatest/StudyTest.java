@@ -24,7 +24,7 @@ class StudyTest {
 
         Study actual = new Study(10);
 
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -36,7 +36,7 @@ class StudyTest {
 
         // assertThat(assertj 사용)
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -66,7 +66,7 @@ class StudyTest {
         System.out.println("window start");
         // assertThat(assertj 사용)
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -76,7 +76,7 @@ class StudyTest {
         System.out.println("mac start");
         // assertThat(assertj 사용)
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 //    [END] 실행환경
 
@@ -88,7 +88,7 @@ class StudyTest {
     void create_new_study_fast(){
         // assertThat(assertj 사용)
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -97,7 +97,7 @@ class StudyTest {
     void create_new_study_slow(){
         // assertThat(assertj 사용)
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
 //    [END] Tag

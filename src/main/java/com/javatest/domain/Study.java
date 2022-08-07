@@ -1,68 +1,42 @@
 package com.javatest.domain;
 
-import com.javatest.StudyStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Study {
-
-    private StudyStatus status ;
-
-    private int limit;
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private StudyStatus status = StudyStatus.DRAFT;
+    private int limitCount;
     private String name;
-
-    private Member owner;
-
     private LocalDateTime openDateTime;
+    private Long ownerId;
 
-    public Member getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Member owner) {
-        this.owner = owner;
-    }
-
-    public Study(int limit, String name) {
-        this.limit = limit;
+    public Study(int limit, String name){
+        this.limitCount = limit;
         this.name = name;
     }
 
-    public Study(int limit){
-        if( limit < 0 ){
-            throw new IllegalArgumentException("limit은 0보다 커야합니다.");
+    public Study(int limit) {
+        if (limit < 0) {
+            throw new IllegalArgumentException("limit은 0보다 커야 한다.");
         }
-        this.limit = limit;
+        this.limitCount = limit;
     }
 
-    public StudyStatus getStatus(){
-        return this.status;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LocalDateTime getOpenDateTime() {
-        return openDateTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Study{" +
-                "status=" + status +
-                ", limit=" + limit +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    public void open(){
+    public void open() {
         this.openDateTime = LocalDateTime.now();
         this.status = StudyStatus.OPENED;
+
     }
 }
