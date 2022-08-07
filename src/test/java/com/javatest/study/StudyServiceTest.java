@@ -12,10 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,8 +37,12 @@ class StudyServiceTest {
     @Autowired
     StudyRepository studyRepository;
 
+//    mysql
+//    @Container
+//    static MySQLContainer mySQLContainer = new MySQLContainer().withDatabaseName("test");
+
     @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer().withDatabaseName("test");
+    static DockerComposeContainer mySQLContainer = new DockerComposeContainer(new File("docker-compose.yml"));
 
     @BeforeEach
     void beforeEach(){
