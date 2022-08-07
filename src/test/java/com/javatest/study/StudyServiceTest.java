@@ -4,10 +4,7 @@ import com.javatest.domain.StudyStatus;
 import com.javatest.domain.Member;
 import com.javatest.domain.Study;
 import com.javatest.member.MemberService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -16,13 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
@@ -38,22 +35,14 @@ class StudyServiceTest {
     @Autowired
     StudyRepository studyRepository;
 
+    @Container
     static MySQLContainer mySQLContainer = new MySQLContainer().withDatabaseName("test");
 
-    @BeforeAll
-    static void beforeAll(){
-        mySQLContainer.start();
-        System.out.println("mySQLContainer.getPortBindings() = " + mySQLContainer.getFirstMappedPort());
+    @BeforeEach
+    void beforeEach(){
+        studyRepository.deleteAll();
     }
 
-    @AfterAll
-    static void AfterAll(){
-        mySQLContainer.stop();
-    }
-
-
-    // StudyService가  memberService와 StudyRepository를 의존 받는데 둘 다 구현체가 없는
-    // 인터페이스라서 Mocking이 필요하다.
     @Test
     void createNewStudy(@Mock MemberService memberService,
                         @Mock StudyRepository studyRepository){
@@ -121,9 +110,7 @@ class StudyServiceTest {
         studyService.createNewStudy(1L,study);
 
         //then
-//        assertEquals(member, study.getOwner());
         then(memberService).should(times(1)).notify(study);
-        then(memberService).shouldHaveNoMoreInteractions();
     }
 
     //TODO memberService 객체에 findById 메소드를 1L 값으로 호출하면 member 객체를 리턴하도록 Stubbing
@@ -139,12 +126,8 @@ class StudyServiceTest {
         member.setEmail("hyun@naver.com");
         Study study = new Study(10,"java");
 
-        when(memberService.findById(1L)).thenReturn(Optional.of(member));
-        when(studyRepository.save(study)).thenReturn(study);
 
         studyService.createNewStudy(1L,study);
-
-//        assertEquals(member, study.getOwner());
 
         verify(memberService, times(1)).notify(study);
     }
@@ -158,7 +141,6 @@ class StudyServiceTest {
         StudyService studyService = new StudyService(memberService,studyRepository);
         Study study = new Study(10,"java");
         assertNull(study.getOpenDateTime());
-        given(studyRepository.save(study)).willReturn(study);
 
         //when
         studyService.open(study);
@@ -166,7 +148,5 @@ class StudyServiceTest {
         //then
         assertEquals(study.getStatus(), StudyStatus.OPENED);
         assertNotNull(study.getOpenDateTime());
-        then(studyRepository).should().save(study);
-        then(memberService).should().notify(study);
     }
 }
