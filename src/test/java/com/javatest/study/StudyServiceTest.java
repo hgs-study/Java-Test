@@ -38,12 +38,12 @@ class StudyServiceTest {
     @Autowired
     StudyRepository studyRepository;
 
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql");
+    static MySQLContainer mySQLContainer = new MySQLContainer().withDatabaseName("test");
 
     @BeforeAll
     static void beforeAll(){
         mySQLContainer.start();
-        System.out.println("mySQLContainer.getPortBindings() = " + mySQLContainer.getPortBindings());
+        System.out.println("mySQLContainer.getPortBindings() = " + mySQLContainer.getFirstMappedPort());
     }
 
     @AfterAll
