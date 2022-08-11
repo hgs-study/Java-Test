@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   mysql-container:
-    image: mysql:latest
+    image: mysql
     environment:
       MYSQL_DATABASE: test
       MYSQL_USER: test

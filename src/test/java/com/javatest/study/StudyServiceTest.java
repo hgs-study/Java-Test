@@ -50,6 +50,21 @@ class StudyServiceTest {
     }
 
     @Test
+    @DisplayName("새로운 공부 저장")
+    void createNewStudy_02(){
+        StudyService studyService = new StudyService(memberService,studyRepository);
+        assertNotNull(studyService);
+
+        Study study = new Study(10,"java");
+
+        Study newStudy = studyService.createNewStudy(1L, study);
+
+        verify(memberService, times(1)).notify(study);
+        verify(memberService, never()).validate(any());
+        assertEquals(newStudy.getName(), "java");
+    }
+
+    @Test
     void createNewStudy(@Mock MemberService memberService,
                         @Mock StudyRepository studyRepository){
 
@@ -81,25 +96,6 @@ class StudyServiceTest {
 
     }
 
-    @Test
-    void createNewStudy_02(){
-        StudyService studyService = new StudyService(memberService,studyRepository);
-        assertNotNull(studyService);
-
-        Member member = new Member();
-        member.setId(1L);
-        member.setEmail("hyun@naver.com");
-        Study study = new Study(10,"java");
-
-        studyService.createNewStudy(1L,study);
-
-        verify(memberService, times(1)).notify(study);
-        verify(memberService, never()).validate(any());
-
-        // "순차"적으로 호출된 것 확인
-        InOrder inOrder = inOrder(memberService);
-        inOrder.verify(memberService).notify(study);
-    }
 
     @Test
     void createNewStudy_with_bdd(){
